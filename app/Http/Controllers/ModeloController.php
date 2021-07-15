@@ -9,26 +9,32 @@ class ModeloController extends Controller
 {
     public function index()
     {
-        //
+        $clientes = Cliente::all();
+        return $clientes;
     }
 
     public function store(Request $request)
     {
-        //
+        $clientes = Cliente::create($request->all());
+        return $clientes;          
     }
 
-    public function show(Modelo $modelo)
+    public function show($id)
     {
-        //
+        $clientes = Cliente::findOrFail($id);
+        return $clientes;
     }
 
-    public function update(Request $request, Modelo $modelo)
+    public function update(Request $request, $id)
     {
-        //
+        $user = $request->input();
+        Cliente::findOrFail($id)->update($user);
+        return Cliente::findOrFail($id);   
     }
 
-    public function destroy(Modelo $modelo)
+    public function destroy($id)
     {
-        //
+        $clientes = Cliente::find($id);
+        $clientes->delete();
     }
 }

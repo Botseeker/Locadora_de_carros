@@ -9,31 +9,32 @@ class LocacaoController extends Controller
 {
     public function index()
     {
-        //
+        $clientes = Cliente::all();
+        return $clientes;
     }
 
     public function store(Request $request)
     {
-        //
+        $clientes = Cliente::create($request->all());
+        return $clientes;          
     }
 
-    public function show(Locacao $locacao)
+    public function show($id)
     {
-        //
+        $clientes = Cliente::findOrFail($id);
+        return $clientes;
     }
 
-    public function edit(Locacao $locacao)
+    public function update(Request $request, $id)
     {
-        //
+        $user = $request->input();
+        Cliente::findOrFail($id)->update($user);
+        return Cliente::findOrFail($id);   
     }
 
-    public function update(Request $request, Locacao $locacao)
+    public function destroy($id)
     {
-        //
-    }
-
-    public function destroy(Locacao $locacao)
-    {
-        //
+        $clientes = Cliente::find($id);
+        $clientes->delete();
     }
 }
