@@ -2,39 +2,47 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Modelo;
 use Illuminate\Http\Request;
 
 class ModeloController extends Controller
-{
+{   
+    public function __construct(Modelo $modelos) {
+        $this->modelos = $modelos;
+    }
     public function index()
     {
-        $clientes = Cliente::all();
-        return $clientes;
+        $modelos = $this->modelos->all();
+        return $modelos;
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Modelo $modelos)
     {
-        $clientes = Cliente::create($request->all());
-        return $clientes;          
+        $modelos = $this->modelos->all();
+        return $modelos;      
     }
-
+    /* 
+    * @param Integer
+    * @return \Illuminate\Http\Response
+    */
     public function show($id)
     {
-        $clientes = Cliente::findOrFail($id);
-        return $clientes;
+        $modelos= $this->marca->findOrFail($id);
+        return $modelos;
     }
 
     public function update(Request $request, $id)
     {
-        $user = $request->input();
-        Cliente::findOrFail($id)->update($user);
-        return Cliente::findOrFail($id);   
+        $modelos = $this->modelos->find($id);
+        $modelos->update($request->all());
+        return $modelos;  
     }
 
     public function destroy($id)
-    {
-        $clientes = Cliente::find($id);
-        $clientes->delete();
+    {   
+        $modelos = $this->modelos->find($id);
+        $modelos->delete();
+        return ['msg' => 'Marca removida com sucesso!'];
     }
 }
