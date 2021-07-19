@@ -14,7 +14,7 @@ class ClienteController extends Controller
         return $clientes;
     }
 
-    public function store(Request $request, Cliente $clientes)
+    public function store(Request $request)
     {
         $clientes = Cliente::create($request->all());
         return $clientes;          

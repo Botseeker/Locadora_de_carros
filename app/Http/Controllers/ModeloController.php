@@ -17,9 +17,9 @@ class ModeloController extends Controller
         return $modelos;
     }
 
-    public function store(Request $request, Modelo $modelos)
+    public function store(Request $request)
     {
-        $modelos = $this->modelos->all();
+        $modelos = $this->modelos->create($request->all());
         return $modelos;      
     }
     /* 

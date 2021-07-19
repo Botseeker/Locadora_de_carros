@@ -17,11 +17,17 @@ class MarcaController extends Controller
         $marca = $this->marca->all();
         return $marca;
     }
-
-    public function store(Request $request, Marca $marca)
+    /* 
+    @param \Illuminate\Http\Request $request
+    @return \Illuminate\Http\Response
+    */
+    public function store(Request $request)
     {   
+        $request->validate($this->marca->rules(), $this->marca->feedback());
+
         $marca = $this->marca->create($request->all());
-        return $marca;
+        return response()->json($marca, 201);
+        
     }
     /* 
     *
@@ -31,7 +37,11 @@ class MarcaController extends Controller
     public function show($id)
     {
         $marca = $this->marca->find($id);
-        return $marca;
+
+        if ($marca === null) {
+            return response()->json(['erro' => 'Recurso pequisado não existe.'], 404);
+        }
+            return response()->json($marca, 302);
     }
     /*
     *
@@ -41,8 +51,13 @@ class MarcaController extends Controller
     public function update(Request $request, $id)
     {   
         $marca = $this->marca->find($id);
+
+        if($marca === null) {
+            return response()->json(['erro' => 'Impossivel realizar a atualização. Recurso solicitado não existe'], 404);
+        }
+
         $marca->update($request->all());
-        return $marca;
+            return response()->json($marca, 200);
     }
 
     /* 
@@ -51,7 +66,13 @@ class MarcaController extends Controller
     public function destroy($id)
     {       
         $marca = $this->marca->find($id);
+
+        if($marca === null) {
+            return response()->json(['erro' => 'Impossível realizar a exclusão. Recurso solicitado não existe'], 404);
+        }
+
         $marca->delete();
-        return ['Marca removida com sucesso!'];
+            return response()->json(['Deletada' => 'Marca removida com sucesso!'], 200);
+        
     }
 }
