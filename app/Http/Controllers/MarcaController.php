@@ -23,12 +23,24 @@ class MarcaController extends Controller
     */
     public function store(Request $request)
     {   
+
         $request->validate($this->marca->rules(), $this->marca->feedback());
 
-        $marca = $this->marca->create($request->all());
+        $imagem = $request->file('imagem');
+        $imagem_urn = $imagem->store('imagens','public');
+
+        $marca = $this->marca->create([
+            'nome' => $request->nome,
+            'imagem' => $imagem_urn
+        ]);
         return response()->json($marca, 201);
-        
     }
+        
+    // $marca->nome = $request->nome; //(outro metodo de recuperar os dados)
+    // $marca->imagem = $imagem_urn;
+    // $marca->save();
+        
+    
     /* 
     *
     * @param Integer
@@ -55,7 +67,26 @@ class MarcaController extends Controller
         if($marca === null) {
             return response()->json(['erro' => 'Impossivel realizar a atualização. Recurso solicitado não existe'], 404);
         }
+        if($request->method() === 'PATCH') {
+            
 
+            $regrasDinamicas = array();
+
+            //percorrer todas as regras definidas no model
+            foreach($marca->rules() as $input => $regra) {
+                //Coletar apenas as regras daplicáveis aos parametros parciais da requisição PATCH
+                if(array_key_exists($input, $request->all())) {
+                    $regrasDinamicas[$input] = $regra;
+                }
+                
+            }
+            
+            $request->validate($regrasDinamicas, $marca->feedback());
+
+            } else {
+            $request->validate($marca->rules(), $marca->feedback());
+        }
+        
         $marca->update($request->all());
             return response()->json($marca, 200);
     }
