@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Marca;
 use Illuminate\Http\Request;
 
@@ -70,25 +70,36 @@ class MarcaController extends Controller
         if($request->method() === 'PATCH') {
             
 
-            $regrasDinamicas = array();
+        $regrasDinamicas = array();
 
-            //percorrer todas as regras definidas no model
-            foreach($marca->rules() as $input => $regra) {
-                //Coletar apenas as regras daplicáveis aos parametros parciais da requisição PATCH
-                if(array_key_exists($input, $request->all())) {
-                    $regrasDinamicas[$input] = $regra;
-                }
-                
+        //percorrer todas as regras definidas no model
+        foreach($marca->rules() as $input => $regra) {
+            //Coletar apenas as regras daplicáveis aos parametros parciais da requisição PATCH
+            if(array_key_exists($input, $request->all())) {
+                $regrasDinamicas[$input] = $regra;
             }
             
-            $request->validate($regrasDinamicas, $marca->feedback());
-
-            } else {
-            $request->validate($marca->rules(), $marca->feedback());
         }
+            
+        $request->validate($regrasDinamicas, $marca->feedback());
+
+        } else {
+        $request->validate($marca->rules(), $marca->feedback());
+        }
+        // Remove arquivo antigo se uma nova for adicionada no request.
         
-        $marca->update($request->all());
-            return response()->json($marca, 200);
+        Storage::disk('public')->delete($marca->imagem);
+        
+
+        $imagem = $request->file('imagem');
+        $imagem_urn = $imagem->store('imagens','public');
+
+        $marca->update([
+            'nome' => $request->nome,
+            'imagem' => $imagem_urn
+        ]);
+
+        return response()->json($marca, 200);
     }
 
     /* 
@@ -101,9 +112,11 @@ class MarcaController extends Controller
         if($marca === null) {
             return response()->json(['erro' => 'Impossível realizar a exclusão. Recurso solicitado não existe'], 404);
         }
-
+        // Remove arquivo antigo
+        Storage::disk('public')->delete($marca->imagem);
+        
         $marca->delete();
-            return response()->json(['Deletada' => 'Marca removida com sucesso!'], 200);
+        return response()->json(['Deletada' => 'Marca removida com sucesso!'], 200);
         
     }
 }

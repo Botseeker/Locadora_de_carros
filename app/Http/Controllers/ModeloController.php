@@ -8,19 +8,19 @@ use Illuminate\Http\Request;
 
 class ModeloController extends Controller
 {   
-    public function __construct(Modelo $modelos) {
-        $this->modelos = $modelos;
+    public function __construct(Modelo $modelo) {
+        $this->modelo = $modelo;
     }
     public function index()
     {
-        $modelos = $this->modelos->all();
-        return $modelos;
+        return response()->json($this->modelo->all(), 200);
+        
     }
 
     public function store(Request $request)
     {
-        $modelos = $this->modelos->create($request->all());
-        return $modelos;      
+        $modelo = $this->modelo->create($request->all());
+        return $modelo;      
     }
     /* 
     * @param Integer
@@ -28,21 +28,21 @@ class ModeloController extends Controller
     */
     public function show($id)
     {
-        $modelos= $this->marca->findOrFail($id);
-        return $modelos;
+        $modelo= $this->marca->findOrFail($id);
+        return $modelo;
     }
 
     public function update(Request $request, $id)
     {
-        $modelos = $this->modelos->find($id);
-        $modelos->update($request->all());
-        return $modelos;  
+        $modelo = $this->modelos->find($id);
+        $modelo->update($request->all());
+        return $modelo;  
     }
 
     public function destroy($id)
     {   
-        $modelos = $this->modelos->find($id);
-        $modelos->delete();
+        $modelo = $this->modelo->find($id);
+        $modelo->delete();
         return ['msg' => 'Marca removida com sucesso!'];
     }
 }
